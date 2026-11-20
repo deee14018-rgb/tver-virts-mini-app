@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080d09">
+  <title>TVER VIRTS RAKUZAN</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root { color-scheme: dark; --bg:#080d09; --panel:#111b13; --panel2:#17251a; --green:#62ff75; --muted:#9caf9f; --line:#29432e; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:radial-gradient(ellipse at 50% -20%,#1b3c22 0%,var(--bg) 55%); color:#f3fff4; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; min-height:100vh; }
+    .wrap { max-width:520px; margin:auto; padding:22px 16px calc(30px + env(safe-area-inset-bottom)); }
+    header { text-align:center; padding:16px 8px 22px; }
+    .logo { color:var(--green); font-size:27px; font-weight:950; letter-spacing:2px; text-shadow:0 0 18px #39ff5966; }
+    .brand { font-size:19px; font-weight:850; letter-spacing:5px; margin-top:3px; }
+    .server { display:inline-block; margin-top:12px; padding:7px 12px; border:1px solid #3d7548; color:#b9ffc2; border-radius:99px; font-size:12px; letter-spacing:1px; }
+    .hero { border:1px solid #3d7548; border-radius:20px; padding:18px; background:linear-gradient(135deg,#172c1b,#0d150f); box-shadow:0 0 28px #39ff5918,inset 0 0 25px #39ff5908; }
+    .eyebrow { color:var(--muted); font-size:11px; letter-spacing:1.8px; font-weight:700; }
+    .price { color:var(--green); font-size:35px; font-weight:950; margin:7px 0 2px; text-shadow:0 0 18px #39ff5944; }
+    .sub { color:var(--muted); font-size:12px; }
+    h2 { font-size:16px; margin:24px 2px 12px; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .option { border:1px solid var(--line); background:var(--panel); border-radius:15px; padding:15px 12px; color:white; text-align:left; cursor:pointer; min-height:83px; }
+    .option.active { border-color:var(--green); background:linear-gradient(145deg,#1b3821,#122017); box-shadow:0 0 0 1px #62ff7544,0 0 18px #62ff751c; }
+    .amount { display:block; font-weight:900; font-size:19px; }
+    .cost { display:block; color:var(--green); font-weight:800; margin-top:6px; }
+    .custom { display:flex; gap:9px; align-items:center; margin-top:12px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:10px 12px; }
+    .custom label { color:var(--muted); font-size:13px; flex:1; }
+    input { width:105px; background:#080e09; color:white; border:1px solid var(--line); border-radius:9px; padding:10px; font-size:16px; }
+    .summary { margin-top:18px; border:1px solid var(--line); border-radius:16px; background:#0e170f; padding:15px; }
+    .sumrow { display:flex; justify-content:space-between; gap:10px; margin:7px 0; color:var(--muted); font-size:14px; }
+    .sumrow strong { color:white; }
+    .total { color:var(--green)!important; font-size:22px; font-weight:950; }
+    .buy { width:100%; border:0; border-radius:14px; margin-top:15px; padding:16px; background:linear-gradient(90deg,#54ed69,#9aff83); color:#061008; font-size:15px; font-weight:950; letter-spacing:.5px; cursor:pointer; box-shadow:0 5px 22px #62ff7530; }
+    .note { text-align:center; color:#829786; font-size:11px; line-height:1.5; margin:15px 8px 0; }
+    .toast { display:none; border:1px solid #a65a40; background:#281812; color:#ffd8c8; padding:12px; border-radius:12px; margin-top:12px; font-size:13px; }
+    footer { text-align:center; color:#6e8372; font-size:10px; letter-spacing:1.4px; margin-top:25px; }
+    button:focus-visible,input:focus-visible { outline:2px solid var(--green); outline-offset:2px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="logo">TVER VIRTS</div>
+      <div class="brand">RAKUZAN</div>
+      <div class="server">BLACK RUSSIA · 83 TVER</div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">АКТУАЛЬНЫЙ ПРАЙС</div>
+      <div class="price">50 ₽ <span style="font-size:15px;color:#d8ffdc">/ 1КК</span></div>
+      <div class="sub">Стоимость за 1 000 000 игровой валюты</div>
+    </section>
+
+    <h2>Выбери количество виртов</h2>
+    <section class="grid" id="choices">
+      <button class="option active" data-amount="1"><span class="amount">1кк</span><span class="cost">50 ₽</span></button>
+      <button class="option" data-amount="5"><span class="amount">5кк</span><span class="cost">250 ₽</span></button>
+      <button class="option" data-amount="10"><span class="amount">10кк</span><span class="cost">500 ₽</span></button>
+      <button class="option" data-amount="20"><span class="amount">20кк</span><span class="cost">1 000 ₽</span></button>
+      <button class="option" data-amount="50"><span class="amount">50кк</span><span class="cost">2 500 ₽</span></button>
+      <button class="option" data-amount="100"><span class="amount">100кк</span><span class="cost">5 000 ₽</span></button>
+    </section>
+
+    <div class="custom">
+      <label for="customAmount">Или введи своё количество (в кк)</label>
+      <input id="customAmount" type="number" min="1" max="10000" step="1" inputmode="numeric" placeholder="Напр. 15">
+    </div>
+
+    <section class="summary">
+      <div class="eyebrow">ТВОЙ ЗАКАЗ</div>
+      <div class="sumrow"><span>Сервер</span><strong>83 Tver</strong></div>
+      <div class="sumrow"><span>Количество</span><strong id="selectedAmount">1кк</strong></div>
+      <div class="sumrow"><span>Цена за 1кк</span><strong>50 ₽</strong></div>
+      <div class="sumrow"><span>К оплате</span><strong class="total" id="total">50 ₽</strong></div>
+      <button class="buy" id="orderBtn">ОТПРАВИТЬ ЗАЯВКУ</button>
+      <div class="toast" id="toast"></div>
+    </section>
+    <p class="note">Заявка отправляется администратору бота. Оплата и передача игровой валюты согласовываются отдельно. Проверь правила игры и сервера перед сделкой.</p>
+    <footer> T V E R &nbsp; V I R T S &nbsp; R A K U Z A N </footer>
+  </main>
+<script>
+(() => {
+  const tg = window.Telegram?.WebApp;
+  tg?.ready();
+  tg?.expand();
+
+  let amount = 1;
+  const pricePerMillion = 50;
+  const buttons = [...document.querySelectorAll(".option")];
+  const custom = document.getElementById("customAmount");
+  const selected = document.getElementById("selectedAmount");
+  const total = document.getElementById("total");
+  const toast = document.getElementById("toast");
+
+  function money(n) { return new Intl.NumberFormat("ru-RU").format(n) + " ₽"; }
+  function render() {
+    selected.textContent = amount + "кк";
+    total.textContent = money(amount * pricePerMillion);
+    buttons.forEach(b => b.classList.toggle("active", Number(b.dataset.amount) === amount && !custom.value));
+  }
+  buttons.forEach(b => b.addEventListener("click", () => {
+    custom.value = "";
+    amount = Number(b.dataset.amount);
+    toast.style.display = "none";
+    render();
+  }));
+  custom.addEventListener("input", () => {
+    const n = Number(custom.value);
+    if (Number.isInteger(n) && n >= 1 && n <= 10000) {
+      amount = n;
+      buttons.forEach(b => b.classList.remove("active"));
+      toast.style.display = "none";
+      render();
+    }
+  });
+  document.getElementById("orderBtn").addEventListener("click", () => {
+    const n = Number(custom.value);
+    if (custom.value && (!Number.isInteger(n) || n < 1 || n > 10000)) {
+      toast.textContent = "Введи целое число от 1 до 10 000кк.";
+      toast.style.display = "block";
+      return;
+    }
+    const payload = { type: "new_order", server: "83 Tver", amount_millions: amount, total_rub: amount * pricePerMillion };
+    if (tg) {
+      tg.sendData(JSON.stringify(payload));
+    } else {
+      toast.textContent = "Предпросмотр: открой приложение через кнопку в Telegram-боте, чтобы отправить заявку.";
+      toast.style.display = "block";
+    }
+  });
+  render();
+})();
+</script>
+</body>
+</html>
